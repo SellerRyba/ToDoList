@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add or Update Note</title>
+</head>
+<body>
+<h1>Add or Update Note</h1>
+<form method="post" th:object="${note}" th:action="@{/note/edit}">
+    <input type="hidden" name="id" th:value="${note.id}">
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title" th:value="*{title}"><br>
+    <label for="content">Content:</label><br>
+    <textarea id="content" name="content" th:text="*{content}"></textarea><br>
+    <input type="submit" value="Save">
+</form>
+</body>
+</html>
