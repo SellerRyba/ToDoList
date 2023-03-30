@@ -50,7 +50,6 @@ public class NoteController {
     }
 
 
-
     @PostMapping("/note/delete")
     public ModelAndView deleteNoteById(@RequestParam("id") long id) {
         noteService.deleteById(id);
