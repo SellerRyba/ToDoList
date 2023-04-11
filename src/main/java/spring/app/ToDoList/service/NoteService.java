@@ -1,49 +1,54 @@
 package spring.app.ToDoList.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import spring.app.ToDoList.entity.Note;
+import spring.app.ToDoList.repository.NoteRepository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.Optional;
 
 @Service
 public class NoteService {
 
-    private Map<Long, Note> noteMap = new HashMap<>();
-    private Random random = new Random();
+    private final NoteRepository noteRepository;
+
+    @Autowired
+    public NoteService(NoteRepository noteRepository) {
+        this.noteRepository = noteRepository;
+    }
 
     public List<Note> listAll() {
-        return new ArrayList<>(noteMap.values());
+        List<Note> notes = new ArrayList<>();
+        noteRepository.findAll().forEach(notes::add);
+        return notes;
     }
 
     public Note add(Note note) {
-        long id = random.nextLong();
-        note.setId(id);
-        noteMap.put(id, note);
-        return note;
+        return noteRepository.save(note);
     }
 
     public void deleteById(long id) {
-        if (!noteMap.containsKey(id)) {
+        if (!noteRepository.existsById(id)) {
             throw new IllegalArgumentException("Note with id " + id + " does not exist");
         }
-        noteMap.remove(id);
+        noteRepository.deleteById(id);
     }
 
     public void update(Note note) {
-        if (!noteMap.containsKey(note.getId())) {
+        if (!noteRepository.existsById(note.getId())) {
             throw new IllegalArgumentException("Note with id " + note.getId() + " does not exist");
         }
-        noteMap.put(note.getId(), note);
+        noteRepository.save(note);
     }
 
     public Note getById(long id) {
-        if (!noteMap.containsKey(id)) {
+        Optional<Note> optionalNote = noteRepository.findById(id);
+        if (optionalNote.isPresent()) {
+            return optionalNote.get();
+        } else {
             throw new IllegalArgumentException("Note with id " + id + " does not exist");
         }
-        return noteMap.get(id);
     }
 }
